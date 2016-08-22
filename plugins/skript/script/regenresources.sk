@@ -1,4 +1,4 @@
-variables:
+ï»¿variables:
 	{gateregion} = 1
 	{sigencount} = 7
 	{sigen1cflag} = false
@@ -25,10 +25,10 @@ on Skript start:
 			set {_hours} to {_time.hour} parsed as number
 			set {_minutes} to {_time.minute} parsed as number
 			broadcast "%{_hours}% %{_minutes}%"
-			if {_hours} <= 19:
-				set {_waithours} to 18 -{_hours}
+			if {_hours} <= 18:
+				set {_waithours} to 17 -{_hours}
 			else:
-				set {_waithours} to 32 -{_hours}
+				set {_waithours} to 43 -{_hours}
 			set {_waitminutes} to 59 -{_minutes}
 			set {_wait} to "%{_waithours}% hours and %{_waitminutes}% minutes" parsed as timespan
 			broadcast "%{_wait}%"
@@ -36,12 +36,15 @@ on Skript start:
 			set {_now} to "%now%"
 			set {_date.time::*} to {_now} split at " "
 
+			# At this point, {_date.time::1} would be "04/07/14"
+			# At this point, {_date.time::2} would be "14:43"
+
 			set {_date::*} to {_date.time::1} split at "/"
 			set {_time::*} to {_date.time::2} split at ":"
 
-			set {_date.day} to {_date::3}
-			set {_date.month} to {_date::2}
-			set {_date.year} to {_date::1}
+			set {_date.day} to {_date::3}   #  Becomes 04
+			set {_date.month} to {_date::2}       #  Becomes 07
+			set {_date.year} to {_date::1}      #  Becomes 14
 
 			set {_year} to {date.year} parsed as number
 			set {_yearmoduled} to {_year}
@@ -79,7 +82,7 @@ on Skript start:
 				set {_month} to 31
 			else:
 				set {_month} to 39
-			set {_day} to {date.day} parsed as number
+			set {_day} to {_date.day} parsed as number
 			add {_year} to {_sum}
 			add {_month} to {_sum}
 			add {_day} to {_sum}
@@ -90,29 +93,6 @@ on Skript start:
 				set {_count} to {_count} + 1
 				set {_summoduled} to {_summoduled} - {_num}
 			set {_date} to {_summoduled}
-		broadcast "60•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 30 seconds
-		broadcast "30•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 20 seconds
-		broadcast "10•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "9•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "8•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "7•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "6•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "5•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "4•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "3•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "2•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "1•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
 		if {gateregion} = 1:
 			set {sigen1rflag} to true
 		else if {gateregion} = 2:
@@ -126,7 +106,7 @@ on Skript start:
 		execute console command "/mv unload sigen%{deletesigen}%"
 		wait 3 seconds
 		zip directory "sigen%{deletesigen}%" to zip "sigen%{deletesigen}%.zip"
-		move file "sigen%{deletesigen}%.zip" to "sigenbackup"
+		move file "sigen%{deletesigen}%" to "sigenbackup"
 		execute console command "/mv load sigen%{deletesigen}%"
 		execute console command "/mv delete sigen%{deletesigen}%"
 		execute console command "/mv confirm"
@@ -159,93 +139,76 @@ on Skript start:
 on region enter:
 	wait 1 tick
 	if "%region at player%" contains "sigengate1":
-		if {gateowner} is the owner of the region:
-			if {sigen1rflag} is true:
-				send "&4Œ»İÄ¶¬’†‚Å‚·"
-			else if {sigen1cflag} is true:
-				message "teleported"
-				set {sigen1cflag} to false
-				execute console command "/mvtp %player% sigen%{sigencount} - 3%"
-				wait 10 tick
-				set {sigengate1} to player's location
-				set y coordinate of {sigengate1} to 65
-				set x coordinate of {sigengate1} to 0
-				set z coordinate of {sigengate1} to 0
-				teleport the player to {sigengate1}
-				paste schematic "sigenspawn" at location of player
-				set z coordinate of {sigengate1} to -3
-			else:
-				message "teleported"
-				teleport the player to {sigengate1}
+		if {sigen1rflag} is true:
+			send "&4ç¾åœ¨å†ç”Ÿæˆä¸­ã§ã™"
+		else if {sigen1cflag} is true:
+			set {sigen1cflag} to false
+			execute console command "/mvtp %player% sigen%{sigencount} - 3%"
+			wait 10 tick
+			set {sigengate1} to player's location
+			set y coordinate of {sigengate1} to 65
+			set x coordinate of {sigengate1} to 0
+			set z coordinate of {sigengate1} to 0
+			teleport the player to {sigengate1}
+			paste schematic "sigenspawn" at location of player
+			set z coordinate of {sigengate1} to -3
+		else:
+			teleport the player to {sigengate1}
 on region enter:
 	wait 1 tick
 	if "%region at player%" contains "sigengate2":
-		if {gateowner} is the owner of the region:
-			if {sigen2rflag} is true:
-				send "&4Œ»İÄ¶¬’†‚Å‚·"
-			else if {sigen2cflag} is true:
-				message "teleported"
-				set {sigen1cflag} to false
-				execute console command "/mvtp %player% sigen%{sigencount} - 2%"
-				wait 10 tick
-				set {sigengate2} to player's location
-				set y coordinate of {sigengate2} to 65
-				set x coordinate of {sigengate2} to 0
-				set z coordinate of {sigengate2} to 0
-				teleport the player to {sigengate2}
-				paste schematic "sigenspawn" at location of player
-				set z coordinate of {sigengate2} to -3
-			else:
-				message "teleported"
-				teleport the player to {sigengate2}
+		if {sigen2rflag} is true:
+			send "&4ç¾åœ¨å†ç”Ÿæˆä¸­ã§ã™"
+		else if {sigen2cflag} is true:
+			set {sigen1cflag} to false
+			execute console command "/mvtp %player% sigen%{sigencount} - 2%"
+			wait 10 tick
+			set {sigengate2} to player's location
+			set y coordinate of {sigengate2} to 65
+			set x coordinate of {sigengate2} to 0
+			set z coordinate of {sigengate2} to 0
+			teleport the player to {sigengate2}
+			paste schematic "sigenspawn" at location of player
+			set z coordinate of {sigengate2} to -3
+		else:
+			teleport the player to {sigengate2}
 on region enter:
 	wait 1 tick
 	if "%region at player%" contains "sigengate3":
-		if {gateowner} is the owner of the region:
-			if {sigen1rflag} is true:
-				send "&4Œ»İÄ¶¬’†‚Å‚·"
-			else if {sigen1cflag} is true:
-				message "teleported"
-				set {sigen1cflag} to false
-				execute console command "/mvtp %player% sigen%{sigencount} - 1%"
-				wait 10 tick
-				set {sigengate1} to player's location
-				set y coordinate of {sigengate3} to 65
-				set x coordinate of {sigengate3} to 0
-				set z coordinate of {sigengate3} to 0
-				teleport the player to {sigengate3}
-				paste schematic "sigenspawn" at location of player
-				set z coordinate of {sigengate3} to -3
-			else:
-				message "teleported"
-				teleport the player to {sigengate3}
+		if {sigen1rflag} is true:
+			send "&4ç¾åœ¨å†ç”Ÿæˆä¸­ã§ã™"
+		else if {sigen1cflag} is true:
+			set {sigen1cflag} to false
+			execute console command "/mvtp %player% sigen%{sigencount} - 1%"
+			wait 10 tick
+			set {sigengate1} to player's location
+			set y coordinate of {sigengate1} to 65
+			set x coordinate of {sigengate1} to 0
+			set z coordinate of {sigengate1} to 0
+			teleport the player to {sigengate1}
+			paste schematic "sigenspawn" at location of player
+			set z coordinate of {sigengate1} to -3
+		else:
+			teleport the player to {sigengate1}
 on region enter:
 	wait 1 tick
 	if "%region at player%" contains "sigen1out":
-		if {gateowner} is the owner of the region:
-			message "teleported"
-			teleport the player to {resoursespawn}
+		broadcast "teleported"
+		teleport the player to {resoursespawn}
 on region enter:
 	wait 1 tick
 	if "%region at player%" contains "sigen2out":
-		if {gateowner} is the owner of the region:
-			message "teleported"
-			teleport the player to {resoursespawn}
+		broadcast "teleported"
+		teleport the player to {resoursespawn}
 on region enter:
 	wait 1 tick
 	if "%region at player%" contains "sigen3out":
-		if {gateowner} is the owner of the region:
-			message "teleported"
-			teleport the player to {resoursespawn}
+		broadcast "teleported"
+		teleport the player to {resoursespawn}
 
 command /setresourcesspawn:
 	permission: regenresourse.setspawn
 	description: Set resourse spawn
 	trigger:
 		set {resoursespawn} to player's location
-command /setgateowner:
-	permission: regenresourse.setowner
-	description: Set owner spawn
-	trigger:
-		set {gateowner} to the player
-		message "Set owner %{gateowner}%"
+
