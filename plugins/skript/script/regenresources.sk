@@ -25,7 +25,7 @@ on Skript start:
 			set {_hours} to {_time.hour} parsed as number
 			set {_minutes} to {_time.minute} parsed as number
 			broadcast "%{_hours}% %{_minutes}%"
-			if {_hours} <= 18:
+			if {_hours} <= 17:
 				set {_waithours} to 17 -{_hours}
 			else:
 				set {_waithours} to 43 -{_hours}
