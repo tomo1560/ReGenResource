@@ -28,7 +28,7 @@ on Skript start:
 			if {_hours} <= 17:
 				set {_waithours} to 17 -{_hours}
 			else:
-				set {_waithours} to 43 -{_hours}
+				set {_waithours} to 41 -{_hours}
 			set {_waitminutes} to 59 -{_minutes}
 			set {_wait} to "%{_waithours}% hours and %{_waitminutes}% minutes" parsed as timespan
 			broadcast "%{_wait}%"
