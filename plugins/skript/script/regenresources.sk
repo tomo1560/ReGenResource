@@ -28,7 +28,6 @@ on skript load:
     if {{@worldidprefix}worldcount} isn't set:
         set {{@worldidprefix}worldcount} to {@numberofworld}
 every minute in "world":
-    broadcast "判定"
     if "%now%" contains "{@regentime}":
         if "%date({@regendate})%" is "true":
             add 1 to {{@worldidprefix}worldcount}    #5
