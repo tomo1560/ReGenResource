@@ -1,251 +1,154 @@
-variables:
-	{gateregion} = 1
-	{sigencount} = 7
-	{sigen1cflag} = false
-	{sigen1rflag} = false
-	{sigen2cflag} = false
-	{sigen2rflag} = false
-	{sigen3cflag} = false
-	{sigen3rflag} = false
-	{true} = true
-	
-on Skript start:
-	while {true} is true:
-		set {_date} to 7
-		while {_date} isn't 0:
-			set {_now} to "%now%"
-			set {_date.time::*} to {_now} split at " "
+#Depend:skUtilities
+options:
+    regendate: 3    #æœˆ0ç«1æ°´2æœ¨3é‡‘4åœŸ5æ—¥6
+    regentime: 1:33
+    numberofworld: 4
+    worldidprefix: sigen
+    worldnameprefix:è³‡æº
+    schematicname:sigenspawn
+#Variables
+#{{@worldidprefix}worldcount} ã“ã‚Œã¾ã§ã®å†ç”Ÿæˆã—ãŸãƒ¯ãƒ¼ãƒ«ãƒ‰æ•°:number
+#{{@worldidprefix}disablegate} è³‡æºã¸ã®ã‚²ãƒ¼ãƒˆã‚’åˆ©ç”¨å¯èƒ½ã«ã™ã‚‹ã‹:boolean
+#loop {@numberofworld} times:
+#   set {{@worldidprefix}worldtogate::%{{@worldidprefix}worldcount}-loop-value+1%} to loop-value    set {sigenworld}
+#   set {{@worldidprefix}gatetoworld::%loop-value%} to {{@worldidprefix}worldcount}-loop-value+1
+#{{@worldidprefix}gatetoworld::*}  Gate to world    {sigengatetoworld::4} = 1   ã‚²ãƒ¼ãƒˆ4ã¯è³‡æº1ã«ã¤ãªãŒã‚‹
+#{{@worldidprefix}worldtogate::*}  world to gate    {sigenworldtogate::1} = 4   è³‡æº1ã¯ã‚²ãƒ¼ãƒˆ4ã«ã¤ãªãŒã‚‹
+#
+#region
+#{{@worldidprefix}gatein::*}
+#sigengatein1
+#sigengatein2
+#sigengatein3...
+#{{@worldidprefix}gateout::*}
+#sigengateout1
+#sigengateout2
+#sigengateout3...
+on skript load:
+    if {{@worldidprefix}worldcount} isn't set:
+        set {{@worldidprefix}worldcount} to {@numberofworld}
+every minute in "world":
+    broadcast "åˆ¤å®š"
+    if "%now%" contains "{@regentime}":
+        if "%date({@regendate})%" is "true":
+            add 1 to {{@worldidprefix}worldcount}    #5
+            set {_removeworldnumber} to {{@worldidprefix}worldcount}-{@numberofworld} #1
+            set {{@worldidprefix}disablegate::%{_removeworldnumber}%} to true    #{disablegate::1} to true
 
-			set {_date::*} to {_date.time::1} split at "/"
-			set {_time::*} to {_date.time::2} split at ":"
+            set {_removeworldid} to "{@worldidprefix}%{_removeworldnumber}%"  #"sigen1"
+            set {_newworldid} to "{@worldidprefix}%{{@worldidprefix}worldcount}%"  #"sigen5"
+            set {_removeworldname} to "{@worldnameprefix}%{_removeworldnumber}%"  #"è³‡æº1"
+            set {_newworldname} to "{@worldnameprefix}%{{@worldidprefix}worldcount}%"  #"è³‡æº5"
 
-			set {_time.hour} to {_time::1}
-			set {_time.minute} to {_time::2}
-			
-			set {_hours} to {_time.hour} parsed as number
-			set {_minutes} to {_time.minute} parsed as number
-			broadcast "%{_hours}% %{_minutes}%"
-			if {_hours} <= 17:
-				set {_waithours} to 17 -{_hours}
-			else:
-				set {_waithours} to 41 -{_hours}
-			set {_waitminutes} to 59 -{_minutes}
-			set {_wait} to "%{_waithours}% hours and %{_waitminutes}% minutes" parsed as timespan
-			broadcast "%{_wait}%"
-			wait {_wait}
-			set {_now} to "%now%"
-			set {_date.time::*} to {_now} split at " "
-
-			set {_date::*} to {_date.time::1} split at "/"
-			set {_time::*} to {_date.time::2} split at ":"
-
-			set {_date.day} to {_date::3}
-			set {_date.month} to {_date::2}
-			set {_date.year} to {_date::1}
-
-			set {_year} to {_date.year} parsed as number
-			set {_yearmoduled} to {_year}
-			set {_num} to 4
-			set {_count} to 0
-			while {_yearmoduled} is greater than or equal to {_num}:
-				set {_count} to {_count} + 1
-				set {_yearmoduled} to {_yearmoduled} - {_num}
-			add -35 to {_year}
-			add {_count} to {_year}
-			set {_month} to {_date.month} parsed as number
-			if {_month} is 1:
-				set {_month} to 36
-				add -1 to {_year}
-			else if {_month} is 2:
-				set {_month} to 39
-				add -1 to {_year}
-			else if {_month} is 3:
-				set {_month} to 10
-			else if {_month} is 4:
-				set {_month} to 13
-			else if {_month} is 5:
-				set {_month} to 15
-			else if {_month} is 6:
-				set {_month} to 18
-			else if {_month} is 7:
-				set {_month} to 20
-			else if {_month} is 8:
-				set {_month} to 23
-			else if {_month} is 9:
-				set {_month} to 26
-			else if {_month} is 10:
-				set {_month} to 28
-			else if {_month} is 11:
-				set {_month} to 31
-			else:
-				set {_month} to 39
-			set {_day} to {_date.day} parsed as number
-			add {_year} to {_sum}
-			add {_month} to {_sum}
-			add {_day} to {_sum}
-			set {_summoduled} to {_sum}
-			set {_num} to 7
-			set {_count} to 0
-			while {_summoduled} is greater than or equal to {_num}:
-				set {_count} to {_count} + 1
-				set {_summoduled} to {_summoduled} - {_num}
-			set {_date} to {_summoduled}
-		broadcast "60•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 30 seconds
-		broadcast "30•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 20 seconds
-		broadcast "10•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "9•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "8•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "7•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "6•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "5•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "4•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "3•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "2•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		wait 1 seconds
-		broadcast "1•bŒã‚É‘Œ¹%{gateregion}%‚ÌÄ¶¬‚ğs‚¢‚Ü‚·B"
-		if {gateregion} = 1:
-			set {sigen1rflag} to true
-		else if {gateregion} = 2:
-			set {sigen2rflag} to true
-		else:
-			set {sigen3rflag} to true
-		set {deletesigen} to {sigencount} -3
-		execute console command "/rg remove sigenspawn%{gateregion}% -w sigen%{deletesigen}%"
-		execute console command "/rg remove sigen%{gateregion}%out -w sigen%{deletesigen}%"
-		execute console command "/wb sigen%{deletesigen}% clear"
-		execute console command "/mv unload sigen%{deletesigen}%"
-		wait 3 seconds
-		zip directory "sigen%{deletesigen}%" to zip "sigen%{deletesigen}%.zip"
-		move file "sigen%{deletesigen}%.zip" to "sigenbackup"
-		execute console command "/mv load sigen%{deletesigen}%"
-		execute console command "/mv delete sigen%{deletesigen}%"
-		execute console command "/mv confirm"
-		execute console command "/mv create sigen%{sigencount}% normal"
-		wait 5 seconds
-		copy file "regions\%{gateregion}%\regions.yml" to "plugins\WorldGuard\worlds\sigen%{sigencount}%"
-		if {gateregion} is 3:
-			set {gateregion} to 1
-		execute console command "/rg reload"
-		execute console command "/wb sigen%{sigencount}% set 50 spawn"
-		execute console command "/wb sigen%{sigencount}% fill 500 10 false"
-		execute console command "/wb fill confirm"
-		wait 3 seconds
-		execute console command "/wb sigen%{sigencount}% set 2000 spawn"
-		if {gateregion} is 1:
-			set {sigen1rflag} to false
-		else if {gateregion} is 2:
-			set {sigen2rflag} to false
-		else:
-			set {sigen3rflag} to false
-		if {gateregion} is 1:
-			set {sigen1cflag} to true
-		else if {gateregion} is 2:
-			set {sigen2cflag} to true
-		else:
-			set {sigen3cflag} to true
-		add 1 to {sigencount}
-		add 1 to {gateregion}
-
+            broadcast "60ç§’å¾Œã«%{_removeworldname}%ã‚’å‰Šé™¤ã—ï¼Œ%{_newworldname}%ã®ç”Ÿæˆã‚’è¡Œã„ã¾ã™ã€‚"
+            wait 30 seconds
+            broadcast "30ç§’å¾Œã«%{_removeworldname}%ã‚’å‰Šé™¤ã—ï¼Œ%{_newworldname}%ã®ç”Ÿæˆã‚’è¡Œã„ã¾ã™ã€‚"
+            wait 20 seconds
+            loop 10 times:
+                broadcast "%10-loop-value%ç§’å‰"
+                wait 1 seconds
+            broadcast "ç”Ÿæˆã‚’é–‹å§‹ã™ã‚‹ãŸã‚%{_removeworldname}%ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ãƒ†ãƒ¬ãƒãƒ¼ãƒˆã—ã¾ã—ãŸ"
+            loop all players:
+                if loop-player's world is "%{_removeworldid}%":
+                    execute loop-player command "/spawn"
+            execute console command "/mv unload %{_removeworldid}%"
+            wait 3 seconds
+            if file "plugins\regenresorce\{@worldidprefix}backup" isn't a file:
+                create dir "plugins\regenresorce\{@worldidprefix}backup"
+            zip directory "%{_removeworldid}%" to zip "plugins\regenresorce\{@worldidprefix}backup\%{_removeworldid}%.zip"
+            execute console command "/mv load %{_removeworldid}%"
+            execute console command "/mv delete %{_removeworldid}%"
+            execute console command "/mv confirm"
+            execute console command "/mv create %{_newworldid}% normal"
+            wait 5 seconds
+            loop {@numberofworld} times:
+                set {_countnumber} to {{@worldidprefix}worldcount} - loop-value
+                add 1 to {_countnumber}
+                set {{@worldidprefix}worldtogate::%{_countnumber}%} to loop-value
+                set {{@worldidprefix}gatetoworld::%loop-value%} to {_countnumber}
+            set {_newgatenumber} to {{@worldidprefix}worldtogate::%{_newworldid}%}
+            copy file "plugins\regenresorce\regions.yml" to "plugins\WorldGuard\worlds\%{_newworldid}%"
+            set line 13 in file "plugins\WorldGuard\worlds\%{_newworldid}%\regions.yml" to "    {@worldidprefix}gateout%{_newgatenumber}%:"
+            execute console command "/rg reload"
+            execute console command "/wb %{_newworldid}% set 50 spawn"
+            execute console command "/wb %{_newworldid}% fill 500 10 false"
+            execute console command "/wb fill confirm"
+            wait 3 seconds
+            execute console command "/wb %{_newworldid}% set 2000 spawn"
+            set {{@worldidprefix}newworld::%{_newgatenumber}%} to true
 on region enter:
-	wait 1 tick
-	if "%region at player%" contains "sigengate1":
-		if {gateowner} is the owner of the region:
-			if {sigen1rflag} is true:
-				send "&4Œ»İÄ¶¬’†‚Å‚·"
-			else if {sigen1cflag} is true:
-				message "teleported"
-				set {sigen1cflag} to false
-				execute console command "/mvtp %player% sigen%{sigencount} - 3%"
-				wait 10 tick
-				set {sigengate1} to player's location
-				set y coordinate of {sigengate1} to 65
-				set x coordinate of {sigengate1} to 0
-				set z coordinate of {sigengate1} to 0
-				teleport the player to {sigengate1}
-				paste schematic "sigenspawn" at location of player
-				set z coordinate of {sigengate1} to -3
-			else:
-				message "teleported"
-				teleport the player to {sigengate1}
-on region enter:
-	wait 1 tick
-	if "%region at player%" contains "sigengate2":
-		if {gateowner} is the owner of the region:
-			if {sigen2rflag} is true:
-				send "&4Œ»İÄ¶¬’†‚Å‚·"
-			else if {sigen2cflag} is true:
-				message "teleported"
-				set {sigen1cflag} to false
-				execute console command "/mvtp %player% sigen%{sigencount} - 2%"
-				wait 10 tick
-				set {sigengate2} to player's location
-				set y coordinate of {sigengate2} to 65
-				set x coordinate of {sigengate2} to 0
-				set z coordinate of {sigengate2} to 0
-				teleport the player to {sigengate2}
-				paste schematic "sigenspawn" at location of player
-				set z coordinate of {sigengate2} to -3
-			else:
-				message "teleported"
-				teleport the player to {sigengate2}
-on region enter:
-	wait 1 tick
-	if "%region at player%" contains "sigengate3":
-		if {gateowner} is the owner of the region:
-			if {sigen1rflag} is true:
-				send "&4Œ»İÄ¶¬’†‚Å‚·"
-			else if {sigen1cflag} is true:
-				message "teleported"
-				set {sigen1cflag} to false
-				execute console command "/mvtp %player% sigen%{sigencount} - 1%"
-				wait 10 tick
-				set {sigengate1} to player's location
-				set y coordinate of {sigengate3} to 65
-				set x coordinate of {sigengate3} to 0
-				set z coordinate of {sigengate3} to 0
-				teleport the player to {sigengate3}
-				paste schematic "sigenspawn" at location of player
-				set z coordinate of {sigengate3} to -3
-			else:
-				message "teleported"
-				teleport the player to {sigengate3}
-on region enter:
-	wait 1 tick
-	if "%region at player%" contains "sigen1out":
-		if {gateowner} is the owner of the region:
-			message "teleported"
-			teleport the player to {resoursespawn}
-on region enter:
-	wait 1 tick
-	if "%region at player%" contains "sigen2out":
-		if {gateowner} is the owner of the region:
-			message "teleported"
-			teleport the player to {resoursespawn}
-on region enter:
-	wait 1 tick
-	if "%region at player%" contains "sigen3out":
-		if {gateowner} is the owner of the region:
-			message "teleported"
-			teleport the player to {resoursespawn}
+    wait 1 tick
+    if "%region at player%" contains "{@worldidprefix}gatein":
+        if {gateowner} is the owner of the region:
+            set {_outvalue::*} to split "%region at player%" by "gatein"
+            set {_outnumber} to {_outvalue::3}
+            if "%region at player%" contains "{@worldidprefix}gatein%{_outnumber}%":
+                if {{@worldidprefix}disablegate::%{_outnumber}%} is true:
+                    message "ç”Ÿæˆä¸­ã®ãŸã‚ãƒ¯ãƒ¼ãƒ«ãƒ‰å†…ã«å…¥ã‚‹ã“ã¨ãŒã§ãã¾ã›ã‚“ï¼"
+                else if {{@worldidprefix}newworld::%{_outnumber}%} is true:
+                    set {{@worldidprefix}newworld::%{_outnumber}%} to false
+                    execute console command "/mvtp %player% {@worldidprefix}%{{@worldidprefix}gatetoworld::%{_outnumber}%}%"
+                    wait 10 tick
+                    set {{@worldidprefix}location::%{{@worldidprefix}gatetoworld::%{_outnumber}%}%} to player's location
+                    set y coordinate of {{@worldidprefix}location::%{{@worldidprefix}gatetoworld::%{_outnumber}%}%} to 65
+                    set x coordinate of {{@worldidprefix}location::%{{@worldidprefix}gatetoworld::%{_outnumber}%}%} to 0
+                    set z coordinate of {{@worldidprefix}location::%{{@worldidprefix}gatetoworld::%{_outnumber}%}%} to 0
+                    teleport the player to {{@worldidprefix}location::%{{@worldidprefix}gatetoworld::%{_outnumber}%}%}
+                    make player run cmd "//schem load {@schematicname}" as op
+                    make player run cmd "//paste" as op
+                    set z coordinate of {{@worldidprefix}location::%{{@worldidprefix}gatetoworld::%{_outnumber}%}%} to -3
+                else:
+                    message "teleported"
+                    teleport the player to {{@worldidprefix}location::%{{@worldidprefix}gatetoworld::%{_outnumber}%}%}
+    else if "%region at player%" contains "{@worldidprefix}gateout":
+        if {gateowner} is the owner of the region:
+            set {_outvalue::*} to split "%region at player%" by "gateout"
+            set {_outnumber} to {_outvalue::3}
+            message "teleported"
+            teleport the player to {{@worldidprefix}inlocation::%{{@worldidprefix}worldtogate::%{_outnumber}%}%}
 
-command /setresourcesspawn:
-	permission: regenresourse.setspawn
-	description: Set resourse spawn
-	trigger:
-		set {resoursespawn} to player's location
+command /setgatelocation <number>:
+    permission: regenresourse.setspawn
+    description: Set resourse spawn
+    trigger:
+        set {{@worldidprefix}inlocation::%arg-1%} to player's location
+
 command /setgateowner:
-	permission: regenresourse.setowner
-	description: Set owner spawn
-	trigger:
-		set {gateowner} to the player
-		message "Set owner %{gateowner}%"
+    permission: regenresourse.setowner
+    description: Set owner spawn
+    trigger:
+        set {gateowner} to the player
+        message "Set owner %{gateowner}%"
+
+function date(n:number) :: boolean: #æœˆ0ç«1æ°´2æœ¨3é‡‘4åœŸ5æ—¥6
+    set {_now} to "%now%"
+    set {_date.time::*} to {_now} split at " "
+
+    set {_date::*} to {_date.time::1} split at "/"
+    set {_time::*} to {_date.time::2} split at ":"
+
+    set {_time.hour} to {_time::1}
+    set {_time.minute} to {_time::2}
+    
+    set {_date.day} to {_date::3} parsed as number
+    set {_date.month} to {_date::2} parsed as number
+    set {_date.year} to {_date::1} parsed as number
+    add 2000 to {_date.year}
+    if {_date.month} <= 2:  #2æœˆä»¥ä¸‹ãªã‚‰å¹´ã‹ã‚‰1å¼•ã„ã¦æœˆã«13è¶³ã™
+        set {_date.year} to {_date.year} - 1
+        set {_date.month} to {_date.month} + 13
+    else:   #ãã‚Œä»¥å¤–ã¯æœˆã«1è¶³ã™
+        set {_date.month} to {_date.month} + 1
+    set {_A} to rounded down (365.25*{_date.year})
+    set {_B} to rounded down (30.6*{_date.month})
+    set {_C} to rounded down ({_date.year}/400) 
+    set {_D} to rounded down ({_date.year}/100)
+    set {_E} to ({_A}+{_B}+{_C}+{_date.day}-{_D})-429
+    set {_F} to rounded down ({_E}/7)
+    set {_F} to {_F}*7
+    set {_G} to {_E} - {_F}
+    if {_G} is {_n}:
+        set {_result} to true
+    else:
+        set {_result} to false
+    return {_result}
